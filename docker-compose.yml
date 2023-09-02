@@ -1,0 +1,15 @@
+version: "3.6"
+services:
+  postgres:
+    image: postgres:13
+    container_name: todo-server
+    hostname: localhost
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./.db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: todo_dev
