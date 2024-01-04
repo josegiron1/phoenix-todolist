@@ -31,32 +31,33 @@ defmodule TodoWeb.LiveView do
   def handle_event("toggle_task", params, socket) do
     todo = Todo.Repo.get_by(Todo.Todo.Todo, id: params["id"])
 
-    changeset = Todo.Todo.Todo.changeset(todo, %{"completed" => params["value"]})
+    changeset = Todo.Todo.Todo.changeset(todo, %{"completed" => true})
 
     Todo.Repo.update(changeset)
     |> assign_todos(socket)
     |> handle_event_response(socket)
   end
 
-  def handle_event_response({:ok, todos}, socket)
+  def handle_event_response({:ok, todos}, socket) do
     {:noreply, assign(socket, data: todos)}
   end
 
-  handle_event_response({:error, changeset}, socket)
+  def handle_event_response({:error, changeset}, socket) do
     {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
-  def assign_todos({:ok, todos}, socket)
-    Enum.map(socket.assigns.data, fn t ->
-      if t.id == todo.id do
-        todo
+  def assign_todos({:ok, todos}, socket) do
+    updatedTodos = Enum.map(socket.assigns.data, fn t ->
+      if todos.id == t.id do
+        todos
       else
         t
       end
     end)
+    {:ok, updatedTodos}
   end
 
-  def assign_todos({:error, err}, socket)
+  def assign_todos({:error, err}, _socket) do
     err
   end
 
